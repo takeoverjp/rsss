@@ -1,0 +1,4 @@
+feedparser
+openai==0.28.1
+requests
+urllib3<2
