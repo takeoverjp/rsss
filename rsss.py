@@ -4,7 +4,6 @@ import os
 import requests
 import logging
 import datetime
-import pprint
 
 def get_new_articles(feed_url):
     feed = feedparser.parse(feed_url)
