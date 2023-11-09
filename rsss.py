@@ -68,6 +68,7 @@ def send_message(message):
 
 def main():
     rsss=[
+          'https://hnrss.org/newest?points=100',
           'https://www.phoronix.com/rss.php',
           'http://lwn.net/headlines/newrss']
     for rss in rsss:
