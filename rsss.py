@@ -1,9 +1,10 @@
 import feedparser
-import openai
+from openai import OpenAI
 import os
 import requests
 import logging
 import datetime
+import pprint
 
 def get_new_articles(feed_url):
     feed = feedparser.parse(feed_url)
@@ -17,8 +18,6 @@ def get_new_articles(feed_url):
             new_articles.append(article)
 
     return new_articles
-
-openai.api_key = os.environ["OPENAI_API_KEY"]
 
 def summarize_article(article):
     prompt = f"""
@@ -39,22 +38,36 @@ def summarize_article(article):
 2.
 3.
 
+"""
+    body = f"""
 {article.title}
 {article.link}
 """
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo-instruct",
-        prompt=prompt,
-        max_tokens=500,
-        n=1,
-        stop=None,
-        temperature=0.5,
+    client = OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages=[
+            {
+                "role": "system",
+                "content": prompt,
+            },
+            {
+                "role": "user",
+                "content": body,
+            }
+        ],
+        temperature=1,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
     )
+    # pprint.pprint(response)
     return f"""
 {article.title}
 {article.link}
 
-{response.choices[0].text.strip()}
+{response.choices[0].message.content.strip()}
 """
 
 def send_message(message):
